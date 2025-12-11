@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ViraWear Connect|Login</title>
+  <link rel="stylesheet" href="login.css">
+
+  <style>
+    
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: #09090B;
+  color: #fff;
+}
+
+.container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.card {
+  background: #18181B;
+  width: 500px;
+  padding: 40px;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 0 20px rgba(0,0,0,0.4);
+}
+
+.logo
+{
+    width: 140px;
+    height: auto;
+    margin-top: 10px;
+    margin-left:-30px;
+}
+
+
+
+.logo,.title h1{
+    display: inline-block;
+    vertical-align: middle;
+  
+}
+.title h1{
+    margin-left: -30px;
+    font-size: 28px;
+    font-weight: 600;
+}
+
+
+.eye-icon {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: grey;        
+    font-size: 18px;
+}
+
+.eye-icon.active {
+    color: white;      
+}
+
+.subtitle {
+  margin-top: -20px;
+  margin-bottom: 25px;
+
+  font-size: 14px;
+  color: #a8a8a8;
+}
+label {
+  display: block;
+  text-align: left;
+  margin: 10px 0 5px;
+  font-size: 14px;
+ 
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #333;
+  background: #232428;
+  color: #fff;
+  font-size: 15px;
+  outline: none;
+  margin-bottom: 15px;
+}
+
+input:active, input:focus
+{
+    border:#777 3px solid;
+}
+
+
+input::placeholder {
+  color: #777;
+}
+
+button {
+  width: 90%;
+  padding: 14px;
+  background: #008ec4;
+  color: #fff;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 5px;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #007ba8;
+}
+button:active {
+  background: #006a8f;
+}
+
+@media(max-width:430px)
+{
+    .card
+    {
+        margin: 20px;
+    }
+
+    .title h1
+    {
+        font-size: 24px;
+        margin: -40px 0 30px -20px;
+    }
+
+    .logo
+    {
+        height: 160px;
+        width: auto;
+        margin-left: -20px;
+    }
+
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <div class="card">
+      <div class="title">
+        <img src="ViraWear Connect-png.png" alt="logo" class="logo">
+        <h1>ViraWear Connect</h1>
+      </div>
+
+      <p class="subtitle">Sign in to access your monitoring dashboard</p>
+
+      <form>
+        <label>Email</label>
+        <input type="email" placeholder="your@email.com">
+
+        <label>Password</label>
+        <input type="password" placeholder="••••••••">
+        
+
+
+        <button type="submit" onclick="goToAnotherPage()">Sign In</button>
+      </form>
+    </div>
+
+  </div>
+  <script>
+
+    function goToAnotherPage() {
+        event.preventDefault();
+            window.location.href = "dashboard.html";
+        }
+  </script>
+</body>
+</html>

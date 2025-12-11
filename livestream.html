@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ViraWear Connect | Livestream</title>
+    <style> 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0e1117;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        .page {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* ---------- TOP BAR ---------- */
+
+        .top-bar {
+            width: 100%;
+            background: #0f141c;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1b222e;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-img {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* ---------- SIDEBAR ---------- */
+
+        .sidebar {
+            width: 240px;
+            background: #141821;
+            padding: 25px 20px;
+            height: calc(100vh - 70px);
+            position: fixed;
+            top: 70px;
+            left: 0;
+            overflow-y: auto;
+            border-right: 1px solid #1b222e;
+        }
+
+        .nav {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .nav li {
+            margin-bottom: 10px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            color: #d0d4e4;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            background: #1f2633;
+        }
+
+        .nav-link.active {
+            background: #1f2633;
+            color: #ffffff;
+        }
+
+        .nav-icon-img{
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            object-fit: contain;
+        }
+
+        /* ---------- MAIN CONTENT ---------- */
+
+        .main {
+            margin-left: 240px;
+            margin-top: 70px;
+            height: calc(100vh - 70px);
+            overflow-y: auto;
+            padding: 20px 30px 30px;
+            background: #0f141c;
+            width: calc(100% - 240px);
+        }
+
+        .top-title {
+            font-size: 30px;
+            font-weight: 600;
+            -webkit-text-stroke: 0.3px white;
+        }
+
+        .settings-header {
+            color: #5a6475;
+            margin-top: 2px;
+            margin-bottom: 20px;
+        }
+
+        /* ---------- USER MENU (same pattern as dashboard/gps) ---------- */
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-circle {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #00bcd4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            right: 0;
+            top: 42px;
+            background: #141821;
+            border-radius: 12px;
+            padding: 12px 14px;
+            width: 240px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            border: 1px solid #222634;
+            display: none;
+            z-index: 1100;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .user-info {
+            padding-bottom: 10px;
+            border-bottom: 1px solid #232937;
+            margin-bottom: 10px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: #a5adbd;
+            margin-top: 2px;
+            word-break: break-all;
+        }
+
+        .dropdown-btn {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: none;
+            background: #222634;
+            color: #ffffff;
+            font-size: 13px;
+            text-align: left;
+            margin-top: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .dropdown-btn:hover {
+            background: #2b3141;
+        }
+
+        .dropdown-btn.logout {
+            background: rgba(220, 53, 69, 0.1);
+            color: #ff6b6b;
+        }
+
+        .dropdown-btn.logout:hover {
+            background: rgba(220, 53, 69, 0.2);
+        }
+
+        /* ---------- LIVESTREAM LAYOUT ---------- */
+
+        .card {
+            background: #151a23;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #20242f;
+        }
+
+        .card-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .badge-live {
+            background: #e53935;
+            color: #ffffff;
+        }
+
+        .badge-offline {
+            background: #28303f;
+            color: #9ea7b8;
+        }
+
+        .main-stream {
+            height: 400px;
+            background: #1a202b;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+        }
+
+        .main-stream-icon {
+            color: #ff3b3b;
+            font-size: 40px;
+        }
+
+        .main-stream-title {
+            color: #d0d4e4;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .main-stream-subtitle {
+            color: #a7b0c2;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .main-stream-meta {
+            color: #5a6475;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .stream-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .mini-stream {
+            height: 250px;
+            background: #1a202b;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 8px;
+        }
+
+        .mini-icon-live {
+            color: #ff3b3b;
+            font-size: 30px;
+        }
+
+        .mini-icon-off {
+            color: #9ea7b8;
+            font-size: 30px;
+        }
+
+        .mini-location {
+            color: #a7b0c2;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        .camera-status {
+            font-size: 12px;
+            margin-top: 8px;
+        }
+
+        .status-live {
+            color: #33d17a;
+            font-weight: bold;
+        }
+
+        .status-offline {
+            color: #9ea7b8;
+            font-weight: bold;
+        }
+
+        .camera-meta {
+            color: #5a6475;
+            font-size: 11px;
+            margin-top: 4px;
+        }
+
+        .last-update {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #5a6475;
+        }
+
+        @media (max-width: 900px) {
+            .page {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+                height: auto;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .stream-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="top-left header-brand">
+            <img class="logo-img" src="Images/pulse.png" alt="Logo">
+            <div class="logo-text">ViraWear Connect</div>
+        </div>
+
+        <div class="top-right">
+            <div class="user-menu">
+                <div class="user-circle" id="userCircle">--</div>
+
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-info">
+                        <div class="user-name" id="dropdownName">Loading...</div>
+                        <div class="user-email" id="dropdownEmail"></div>
+                    </div>
+                    <button class="dropdown-btn" id="resetPasswordBtn">Reset Password</button>
+                    <button class="dropdown-btn logout" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE -->
+    <div class="page">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <ul class="nav">
+                <li><a href="dashboard.html" class="nav-link"><img class="nav-icon-img" src="Images/home (1).png">Dashboard</a></li>
+                <li><a href="gps.html" class="nav-link"><img class="nav-icon-img" src="Images/map.png">GPS Tracking</a></li>
+                <li><a href="livestream.html" class="nav-link active"><img class="nav-icon-img" src="Images/video-camera.png">Livestream</a></li>
+                <li><a href="alert.html" class="nav-link"><img class="nav-icon-img" src="Images/warning.png">Alerts</a></li>
+                <li><a href="settings.html" class="nav-link"><img class="nav-icon-img" src="Images/settings.png">Settings</a></li>
+            </ul>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="main">
+            <div class="top-title">Livestream</div>
+            <div class="settings-header">Monitor camera feeds in real-time</div>
+
+            <!-- PRIMARY FEED -->
+            <div class="card" style="margin-bottom: 20px;">
+                <div class="card-header-row">
+                    <div class="card-title" id="mainFeedTitle">Primary Feed - Main Entrance</div>
+                    <span id="mainBadge" class="badge badge-live">LIVE</span>
+                </div>
+
+                <div class="main-stream">
+                    <div class="main-stream-icon">&#x1F3A6;</div>
+                    <div class="main-stream-title" id="mainStreamTitle">Video Stream Active</div>
+                    <div class="main-stream-subtitle" id="mainStreamSubtitle">Building A / Feed 1: Main-Entrance</div>
+                    <div class="main-stream-meta" id="mainStreamMeta">Viewers: 18 • Bitrate: 2200 kbps</div>
+                </div>
+
+                <div class="last-update" id="mainLastUpdate">Last frame: --</div>
+            </div>
+
+            <!-- OTHER FEEDS -->
+            <div class="stream-grid">
+                <!-- CAM 1 -->
+                <div class="card">
+                    <div class="card-header-row">
+                        <div class="card-title">Main Entrance</div>
+                        <span id="cam1Badge" class="badge badge-live">LIVE</span>
+                    </div>
+                    <div class="mini-stream">
+                        <div id="cam1Icon" class="mini-icon-live">&#x1F3A6;</div>
+                        <div class="mini-location">Building A</div>
+                        <div id="cam1StatusText" class="camera-status status-live">
+                            • Streaming normally
+                        </div>
+                        <div id="cam1Meta" class="camera-meta">
+                            Latency: 120 ms • FPS: 29
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CAM 2 -->
+                <div class="card">
+                    <div class="card-header-row">
+                        <div class="card-title">Warehouse</div>
+                        <span id="cam2Badge" class="badge badge-live">LIVE</span>
+                    </div>
+                    <div class="mini-stream">
+                        <div id="cam2Icon" class="mini-icon-live">&#x1F3A6;</div>
+                        <div class="mini-location">Building B</div>
+                        <div id="cam2StatusText" class="camera-status status-live">
+                            • Streaming normally
+                        </div>
+                        <div id="cam2Meta" class="camera-meta">
+                            Latency: 150 ms • FPS: 27
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CAM 3 -->
+                <div class="card">
+                    <div class="card-header-row">
+                        <div class="card-title">Parking Lot</div>
+                        <span id="cam3Badge" class="badge badge-offline">OFFLINE</span>
+                    </div>
+                    <div class="mini-stream">
+                        <div id="cam3Icon" class="mini-icon-off">&#x1F3A6;</div>
+                        <div class="mini-location">Outdoor</div>
+                        <div id="cam3StatusText" class="camera-status status-offline">
+                            • Offline - no signal
+                        </div>
+                        <div id="cam3Meta" class="camera-meta">
+                            Last seen: 12 min ago
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CAM 4 (extra feed, optional) -->
+                <div class="card">
+                    <div class="card-header-row">
+                        <div class="card-title">Control Room</div>
+                        <span id="cam4Badge" class="badge badge-live">LIVE</span>
+                    </div>
+                    <div class="mini-stream">
+                        <div id="cam4Icon" class="mini-icon-live">&#x1F3A6;</div>
+                        <div class="mini-location">Building C</div>
+                        <div id="cam4StatusText" class="camera-status status-live">
+                            • Streaming normally
+                        </div>
+                        <div id="cam4Meta" class="camera-meta">
+                            Latency: 90 ms • FPS: 30
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Same config as login/dashboard/gps
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxNbpe2iuvtz1pQUwLeBf-DIn71zhMu84",
+            authDomain: "virawear-aee99.firebaseapp.com",
+            projectId: "virawear-aee99",
+            storageBucket: "virawear-aee99.firebasestorage.app",
+            messagingSenderId: "41356507152",
+            appId: "1:41356507152:web:c9b5cb3510293dff09b295",
+            measurementId: "G-PVHGMYETTW"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db   = firebase.firestore();
+
+        const userCircle       = document.getElementById("userCircle");
+        const userDropdown     = document.getElementById("userDropdown");
+        const dropdownName     = document.getElementById("dropdownName");
+        const dropdownEmail    = document.getElementById("dropdownEmail");
+        const resetPasswordBtn = document.getElementById("resetPasswordBtn");
+        const logoutBtn        = document.getElementById("logoutBtn");
+
+        function getInitials(name, email) {
+            if (name && name.trim().length > 0) {
+                const parts = name.trim().split(" ").filter(Boolean);
+                let initials = parts[0][0] || "";
+                if (parts.length > 1) {
+                    initials += parts[1][0] || "";
+                }
+                return initials.toUpperCase();
+            }
+            if (email) {
+                return email.slice(0, 2).toUpperCase();
+            }
+            return "--";
+        }
+
+        // Auth state guard
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            let displayName = user.displayName || "";
+            let email = user.email || "";
+
+            try {
+                const doc = await db.collection("users").doc(user.uid).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data.name)  displayName = data.name;
+                    if (data.email) email = data.email;
+                }
+            } catch (err) {
+                console.error("Error fetching user profile:", err);
+            }
+
+            const initials = getInitials(displayName, email);
+            userCircle.textContent = initials;
+
+            dropdownName.textContent = displayName || "(No name)";
+            dropdownEmail.textContent = email || "";
+        });
+
+        // User menu toggle
+        userCircle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle("show");
+        });
+
+        document.addEventListener("click", (e) => {
+            if (!userDropdown.contains(e.target) && !userCircle.contains(e.target)) {
+                userDropdown.classList.remove("show");
+            }
+        });
+
+        resetPasswordBtn.addEventListener("click", () => {
+            const user = auth.currentUser;
+            if (!user || !user.email) {
+                alert("No email associated with this account.");
+                return;
+            }
+
+            auth.sendPasswordResetEmail(user.email)
+                .then(() => {
+                    alert("Password reset email sent to " + user.email);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    alert(error.message);
+                });
+        });
+
+        logoutBtn.addEventListener("click", () => {
+            auth.signOut()
+                .then(() => {
+                    window.location.href = "login.html";
+                })
+                .catch((error) => {
+                    console.error(error);
+                    alert("Error logging out: " + error.message);
+                });
+        });
+
+        /* =======================
+           MOCK REAL-TIME STREAM DATA
+           ======================= */
+
+        const USE_MOCK_DATA = true; // switch to false when you hook real stats
+
+        const streamState = {
+            lastUpdate: new Date(),
+            main: {
+                title: "Primary Feed - Main Entrance",
+                subtitle: "Building A / Feed 1: Main-Entrance",
+                isLive: true,
+                viewers: 18,
+                bitrate: 2200 // kbps
+            },
+            cameras: [
+                { id: "cam1", name: "Main Entrance", isLive: true,  latencyMs: 120, fps: 29 },
+                { id: "cam2", name: "Warehouse",     isLive: true,  latencyMs: 150, fps: 27 },
+                { id: "cam3", name: "Parking Lot",   isLive: false, latencyMs: 0,   fps: 0,  lastSeenSec: 720 },
+                { id: "cam4", name: "Control Room",  isLive: true,  latencyMs: 90,  fps: 30 }
+            ]
+        };
+
+        const $ = (id) => document.getElementById(id);
+
+        function formatTime(date) {
+            return date.toLocaleTimeString();
+        }
+
+        function formatLastFrame(diffMs) {
+            const sec = Math.round(diffMs / 1000);
+            if (sec < 5) return "Last frame: just now";
+            if (sec < 60) return "Last frame: " + sec + " seconds ago";
+            const min = Math.floor(sec / 60);
+            return "Last frame: " + min + " min ago";
+        }
+
+        function renderLivestream(state) {
+            if (!state) return;
+
+            // MAIN
+            $("mainFeedTitle").textContent = state.main.title;
+            $("mainStreamSubtitle").textContent = state.main.subtitle;
+            $("mainStreamMeta").textContent =
+                "Viewers: " + state.main.viewers + " • Bitrate: " + state.main.bitrate.toFixed(0) + " kbps";
+
+            const badge = $("mainBadge");
+            const mainTitle = $("mainStreamTitle");
+            if (state.main.isLive) {
+                badge.textContent = "LIVE";
+                badge.className = "badge badge-live";
+                mainTitle.textContent = "Video Stream Active";
+            } else {
+                badge.textContent = "OFFLINE";
+                badge.className = "badge badge-offline";
+                mainTitle.textContent = "Stream Offline";
+            }
+
+            const now = new Date();
+            const diffMs = now - state.lastUpdate;
+            $("mainLastUpdate").textContent = formatLastFrame(diffMs);
+
+            // CAMERAS
+            state.cameras.forEach(cam => {
+                const live = cam.isLive;
+
+                if (cam.id === "cam1") {
+                    $("cam1Badge").textContent = live ? "LIVE" : "OFFLINE";
+                    $("cam1Badge").className = "badge " + (live ? "badge-live" : "badge-offline");
+                    $("cam1Icon").className = live ? "mini-icon-live" : "mini-icon-off";
+                    $("cam1StatusText").textContent = live ? "• Streaming normally" : "• Offline - no signal";
+                    $("cam1StatusText").className = "camera-status " + (live ? "status-live" : "status-offline");
+                    $("cam1Meta").textContent = live
+                        ? "Latency: " + cam.latencyMs + " ms • FPS: " + cam.fps
+                        : "Last seen: " + Math.round(cam.lastSeenSec / 60) + " min ago";
+                }
+
+                if (cam.id === "cam2") {
+                    $("cam2Badge").textContent = live ? "LIVE" : "OFFLINE";
+                    $("cam2Badge").className = "badge " + (live ? "badge-live" : "badge-offline");
+                    $("cam2Icon").className = live ? "mini-icon-live" : "mini-icon-off";
+                    $("cam2StatusText").textContent = live ? "• Streaming normally" : "• Offline - no signal";
+                    $("cam2StatusText").className = "camera-status " + (live ? "status-live" : "status-offline");
+                    $("cam2Meta").textContent = live
+                        ? "Latency: " + cam.latencyMs + " ms • FPS: " + cam.fps
+                        : "Last seen: " + Math.round(cam.lastSeenSec / 60) + " min ago";
+                }
+
+                if (cam.id === "cam3") {
+                    $("cam3Badge").textContent = live ? "LIVE" : "OFFLINE";
+                    $("cam3Badge").className = "badge " + (live ? "badge-live" : "badge-offline");
+                    $("cam3Icon").className = live ? "mini-icon-live" : "mini-icon-off";
+                    $("cam3StatusText").textContent = live ? "• Streaming normally" : "• Offline - no signal";
+                    $("cam3StatusText").className = "camera-status " + (live ? "status-live" : "status-offline");
+                    $("cam3Meta").textContent = live
+                        ? "Latency: " + cam.latencyMs + " ms • FPS: " + cam.fps
+                        : "Last seen: " + Math.round(cam.lastSeenSec / 60) + " min ago";
+                }
+
+                if (cam.id === "cam4") {
+                    $("cam4Badge").textContent = live ? "LIVE" : "OFFLINE";
+                    $("cam4Badge").className = "badge " + (live ? "badge-live" : "badge-offline");
+                    $("cam4Icon").className = live ? "mini-icon-live" : "mini-icon-off";
+                    $("cam4StatusText").textContent = live ? "• Streaming normally" : "• Offline - no signal";
+                    $("cam4StatusText").className = "camera-status " + (live ? "status-live" : "status-offline");
+                    $("cam4Meta").textContent = live
+                        ? "Latency: " + cam.latencyMs + " ms • FPS: " + cam.fps
+                        : "Last seen: " + Math.round(cam.lastSeenSec / 60) + " min ago";
+                }
+            });
+        }
+
+        // Mock update logic
+        function randomRange(base, delta, min, max) {
+            let v = base + (Math.random() * 2 - 1) * delta;
+            if (v < min) v = min;
+            if (v > max) v = max;
+            return v;
+        }
+
+        function generateMockStreamUpdate() {
+            streamState.lastUpdate = new Date();
+
+            // Main stats
+            streamState.main.viewers = randomRange(streamState.main.viewers, 3, 5, 80);
+            streamState.main.bitrate = randomRange(streamState.main.bitrate, 200, 1200, 3800);
+            // Rarely drop main stream
+            if (Math.random() < 0.05) {
+                streamState.main.isLive = !streamState.main.isLive;
+            }
+
+            // Cameras
+            streamState.cameras.forEach(cam => {
+                if (cam.isLive) {
+                    cam.latencyMs = Math.round(randomRange(cam.latencyMs || 120, 20, 60, 280));
+                    cam.fps       = Math.round(randomRange(cam.fps || 28, 2, 15, 30));
+                    if (Math.random() < 0.05) {
+                        cam.isLive = false;
+                        cam.lastSeenSec = 0;
+                    }
+                } else {
+                    // offline
+                    cam.lastSeenSec = (cam.lastSeenSec || 0) + 5;
+                    if (Math.random() < 0.08) {
+                        cam.isLive = true;
+                        cam.latencyMs = 140;
+                        cam.fps = 25;
+                    }
+                }
+            });
+        }
+
+        function startStreamFeed(onData) {
+            if (USE_MOCK_DATA) {
+                renderLivestream(streamState);
+                setInterval(() => {
+                    generateMockStreamUpdate();
+                    onData(streamState);
+                }, 5000);
+            } else {
+                // Later: replace with real stats from backend / device / Firestore
+                // e.g. db.collection("streams").doc("main").onSnapshot(...)
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            startStreamFeed(renderLivestream);
+        });
+    </script>
+</body>
+</html>

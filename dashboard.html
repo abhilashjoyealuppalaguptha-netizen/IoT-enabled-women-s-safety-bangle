@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>ViraWear Connect | Dashboard</title>
+    <style> 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #0e1117;
+            color: #ffffff;
+            overflow: hidden;
+        }
+
+        .page {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            width: 100%;
+            background: #0f141c;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1b222e;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+        .header-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-img {
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .sidebar {
+            width: 240px;
+            background: #141821;
+            padding: 20px;
+            position: fixed;
+            top: 70px;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+            border-right: 1px solid #1b222e;
+        }
+
+        .nav {
+            list-style: none;
+            margin-top: 20px;
+        }
+
+        .nav li {
+            margin-bottom: 10px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            color: #d0d4e4;
+            font-size: 14px;
+            text-decoration: none;
+        }
+
+        .nav-link:hover {
+            background: #1f2633;
+        }
+
+        .nav-link.active {
+            background: #1f2633;
+            color: #ffffff;
+        }
+
+        .nav-icon-img{
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            object-fit: contain;
+        }
+
+        .main {
+            margin-left: 240px;
+            margin-top: 70px;
+            height: calc(100vh - 70px);
+            overflow-y: auto;
+            padding: 30px;
+            background: #0f141c;
+            width: calc(100% - 240px);
+        }
+
+        .title {
+            font-size: 30px;
+            font-weight: 600;
+            -webkit-text-stroke: 0.3px white;
+        }
+
+        .subtitle {
+            color: #5a6475;
+            margin-top: 2px;
+        }
+
+        /* ---------- USER MENU ---------- */
+
+        .top-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-circle {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background: #00bcd4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .user-dropdown {
+            position: absolute;
+            right: 0;
+            top: 42px;
+            background: #141821;
+            border-radius: 12px;
+            padding: 12px 14px;
+            width: 240px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            border: 1px solid #222634;
+            display: none;
+            z-index: 1100;
+        }
+
+        .user-dropdown.show {
+            display: block;
+        }
+
+        .user-info {
+            padding-bottom: 10px;
+            border-bottom: 1px solid #232937;
+            margin-bottom: 10px;
+        }
+
+        .user-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .user-email {
+            font-size: 12px;
+            color: #a5adbd;
+            margin-top: 2px;
+            word-break: break-all;
+        }
+
+        .dropdown-btn {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: none;
+            background: #222634;
+            color: #ffffff;
+            font-size: 13px;
+            text-align: left;
+            margin-top: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .dropdown-btn:hover {
+            background: #2b3141;
+        }
+
+        .dropdown-btn.logout {
+            background: rgba(220, 53, 69, 0.1);
+            color: #ff6b6b;
+        }
+
+        .dropdown-btn.logout:hover {
+            background: rgba(220, 53, 69, 0.2);
+        }
+
+        /* ---------- DASHBOARD CARDS ---------- */
+
+        #cardcontainer {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: 150px 150px;
+            gap: 20px;
+            grid-template-areas:
+                "card1 card2 card3 card4"
+                "card5 card5 card6 card6";
+        }
+
+        #card1 { grid-area: card1; }
+        #card2 { grid-area: card2; }
+        #card3 { grid-area: card3; }
+        #card4 { grid-area: card4; }
+        #card5 { grid-area: card5; } 
+        #card6 { grid-area: card6; } 
+
+        .card {
+            background: #141821;
+            border-radius: 14px;
+            padding: 20px;
+            border: 1px solid #20242f;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card small {
+            color: #5a6475;
+        }
+
+        .card img {
+            height: 30px;
+        }
+
+        .system-status-card {
+            width: 100%;
+            height: 100%;
+            display: flex; 
+            flex-direction: column;
+            justify-content: space-around; 
+        }
+
+        .system-status-card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 0; 
+        }
+
+        .status-row {
+            background: #232428;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid #2f2f33;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .operational {
+            color: #31c55f;
+            font-weight: bold;
+        }
+
+        .status-bold {
+            font-weight: 700;
+        }
+
+        .status-fade {
+            color: #b8b8b8;
+            font-size: 14px;
+        }
+
+        @media (max-width: 900px) {
+            .page {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: static;
+                height: auto;
+            }
+
+            .main {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            #cardcontainer {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: auto;
+                grid-template-areas:
+                    "card1 card2"
+                    "card3 card4"
+                    "card5 card5"
+                    "card6 card6";
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div class="top-left header-brand">
+            <img class="logo-img" src="Images/pulse.png" alt="Logo">
+            <div class="logo-text">ViraWear Connect</div>
+        </div>
+
+        <div class="top-right">
+            <div class="user-menu">
+                <div class="user-circle" id="userCircle">--</div>
+
+                <div class="user-dropdown" id="userDropdown">
+                    <div class="user-info">
+                        <div class="user-name" id="dropdownName">Loading...</div>
+                        <div class="user-email" id="dropdownEmail"></div>
+                    </div>
+                    <button class="dropdown-btn" id="resetPasswordBtn">Reset Password</button>
+                    <button class="dropdown-btn logout" id="logoutBtn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page">
+        <aside class="sidebar">
+            <ul class="nav">
+                <li><a href="dashboard.html" class="nav-link active"><img class="nav-icon-img" src="Images/home (1).png">Dashboard</a></li>
+                <li><a href="gps.html" class="nav-link"><img class="nav-icon-img" src="Images/map.png">GPS Tracking</a></li>
+                <li><a href="livestream.html" class="nav-link"><img class="nav-icon-img" src="Images/video-camera.png">Livestream</a></li>
+                <li><a href="alert.html" class="nav-link"><img class="nav-icon-img" src="Images/warning.png">Alerts</a></li>
+                <li><a href="settings.html" class="nav-link"><img class="nav-icon-img" src="Images/settings.png">Settings</a></li>
+            </ul>
+        </aside>
+
+        <main class="main">
+            <div>
+                <p class="title">Dashboard Overview</p>
+                <small class="subtitle">Real-time monitoring of system metrics</small>
+            </div>
+
+            <section id="cardcontainer">
+
+                <!-- TEMP -->
+                <div class="card" id="card1">
+                    <div style="display: flex; justify-content: space-between;">
+                        <small>Temperature</small>
+                        <img src="Images/temperature.png">
+                    </div>
+                    <b style="font-size: 35px;">
+                        <span id="tempValue">23</span>
+                        <span style="font-size: 0.5em; color:#5a6475;">
+                            <sup>°</sup>C
+                        </span>
+                    </b>
+                    <small><span id="tempPercent">47</span>% of maximum</small>
+                </div>
+
+                <!-- HUMIDITY -->
+                <div class="card" id="card2">
+                    <div style="display: flex; justify-content: space-between;">
+                        <small>Humidity</small>
+                        <img src="Images/humidity.png">
+                    </div>
+                    <b style="font-size: 35px;">
+                        <span id="humidityValue">23</span>
+                        <span style="font-size: .5em; color:#5a6475;">%</span>
+                    </b>
+                    <small><span id="humidityPercent">47</span>% of maximum</small>
+                </div>
+
+                <!-- WIND -->
+                <div class="card" id="card3">
+                    <div style="display: flex; justify-content: space-between;">
+                        <small>Wind Speed</small>
+                        <img src="Images/wind.png">
+                    </div>
+                    <b style="font-size: 35px;">
+                        <span id="windValue">23</span>
+                        <span style="font-size: .5em; color:#5a6475;">km/h</span>
+                    </b>
+                    <small><span id="windPercent">47</span>% of maximum</small>
+                </div>
+
+                <!-- POWER -->
+                <div class="card" id="card4">
+                    <div style="display: flex; justify-content: space-between;">
+                        <small>Power</small>
+                        <img src="Images/power.png">
+                    </div>
+                    <b style="font-size: 35px;">
+                        <span id="powerValue">23</span>
+                        <span style="font-size: .5em; color:#5a6475;">%</span>
+                    </b>
+                    <small><span id="powerPercent">47</span>% of maximum</small>
+                </div>
+
+                <!-- SYSTEM STATUS -->
+                <div class="card" id="card5" style="height:38vh">
+                    <div class="system-status-card">
+                        <h3>System Status</h3>
+
+                        <div class="status-row">
+                            <span>All Systems</span>
+                            <span class="operational" id="systemStatus">Operational</span>
+                        </div>
+
+                        <div class="status-row">
+                            <span>Active Sensors</span>
+                            <span class="status-bold">
+                                <span id="activeSensors">12</span>/<span id="totalSensors">12</span>
+                            </span>
+                        </div>
+
+                        <div class="status-row">
+                            <span>Last Update</span>
+                            <span class="status-fade" id="lastUpdateText">2 seconds ago</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RECENT ACTIVITY -->
+                <div class="card" id="card6" style="height:38vh;">
+                    <h3>Recent Activity</h3>
+                    <div id="activityList" style="margin-top:10px;">
+                        <!-- JS will inject recent events here -->
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+    <script>
+        // Same config as your login/signup page
+        const firebaseConfig = {
+            apiKey: "AIzaSyCxNbpe2iuvtz1pQUwLeBf-DIn71zhMu84",
+            authDomain: "virawear-aee99.firebaseapp.com",
+            projectId: "virawear-aee99",
+            storageBucket: "virawear-aee99.firebasestorage.app",
+            messagingSenderId: "41356507152",
+            appId: "1:41356507152:web:c9b5cb3510293dff09b295",
+            measurementId: "G-PVHGMYETTW"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        const userCircle = document.getElementById("userCircle");
+        const userDropdown = document.getElementById("userDropdown");
+        const dropdownName = document.getElementById("dropdownName");
+        const dropdownEmail = document.getElementById("dropdownEmail");
+        const resetPasswordBtn = document.getElementById("resetPasswordBtn");
+        const logoutBtn = document.getElementById("logoutBtn");
+
+        // Helper: compute initials
+        function getInitials(name, email) {
+            if (name && name.trim().length > 0) {
+                const parts = name.trim().split(" ").filter(Boolean);
+                let initials = parts[0][0] || "";
+                if (parts.length > 1) {
+                    initials += parts[1][0] || "";
+                }
+                return initials.toUpperCase();
+            }
+            if (email) {
+                return email.slice(0, 2).toUpperCase();
+            }
+            return "--";
+        }
+
+        // Auth state check
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = "login.html";
+                return;
+            }
+
+            let displayName = user.displayName || "";
+            let email = user.email || "";
+
+            try {
+                const doc = await db.collection("users").doc(user.uid).get();
+                if (doc.exists) {
+                    const data = doc.data();
+                    if (data.name) displayName = data.name;
+                    if (data.email) email = data.email;
+                }
+            } catch (err) {
+                console.error("Error fetching user profile:", err);
+            }
+
+            const initials = getInitials(displayName, email);
+            userCircle.textContent = initials;
+
+            dropdownName.textContent = displayName || "(No name)";
+            dropdownEmail.textContent = email || "";
+        });
+
+        // Toggle dropdown on user-circle click
+        userCircle.addEventListener("click", (e) => {
+            e.stopPropagation();
+            userDropdown.classList.toggle("show");
+        });
+
+        // Hide dropdown when clicking outside
+        document.addEventListener("click", (e) => {
+            if (!userDropdown.contains(e.target) && !userCircle.contains(e.target)) {
+                userDropdown.classList.remove("show");
+            }
+        });
+
+        // Reset password
+        resetPasswordBtn.addEventListener("click", () => {
+            const user = auth.currentUser;
+            if (!user || !user.email) {
+                alert("No email associated with this account.");
+                return;
+            }
+
+            auth.sendPasswordResetEmail(user.email)
+                .then(() => {
+                    alert("Password reset email sent to " + user.email);
+                })
+                .catch((error) => {
+                    console.error(error);
+                    alert(error.message);
+                });
+        });
+
+        // Logout
+        logoutBtn.addEventListener("click", () => {
+            auth.signOut()
+                .then(() => {
+                    window.location.href = "login.html";
+                })
+                .catch((error) => {
+                    console.error(error);
+                    alert("Error logging out: " + error.message);
+                });
+        });
+
+        /* =======================
+           MOCK REAL-TIME DATA
+           ======================= */
+
+        const USE_MOCK_DATA = true; // later switch to false when using real device
+
+        const state = {
+            temperature: 23,
+            humidity: 45,
+            windSpeed: 12,
+            power: 76,
+            tempMax: 50,
+            humidityMax: 100,
+            windMax: 60,
+            powerMax: 100,
+            activeSensors: 12,
+            totalSensors: 12,
+            lastUpdate: new Date(),
+            activities: [
+                { message: "System initialized", secondsAgo: 300 },
+                { message: "Sensor calibration completed", secondsAgo: 280 }
+            ]
+        };
+
+        const $ = (id) => document.getElementById(id);
+
+        function renderDashboard(data) {
+            if (!data) return;
+
+            // main cards
+            if ($("tempValue")) $("tempValue").textContent = data.temperature.toFixed(1);
+            if ($("tempPercent")) $("tempPercent").textContent = Math.round((data.temperature / data.tempMax) * 100);
+
+            if ($("humidityValue")) $("humidityValue").textContent = data.humidity.toFixed(1);
+            if ($("humidityPercent")) $("humidityPercent").textContent = Math.round((data.humidity / data.humidityMax) * 100);
+
+            if ($("windValue")) $("windValue").textContent = data.windSpeed.toFixed(1);
+            if ($("windPercent")) $("windPercent").textContent = Math.round((data.windSpeed / data.windMax) * 100);
+
+            if ($("powerValue")) $("powerValue").textContent = data.power.toFixed(0);
+            if ($("powerPercent")) $("powerPercent").textContent = Math.round((data.power / data.powerMax) * 100);
+
+            // system status
+            if ($("activeSensors")) $("activeSensors").textContent = data.activeSensors;
+            if ($("totalSensors")) $("totalSensors").textContent = data.totalSensors;
+
+            if ($("systemStatus")) {
+                $("systemStatus").textContent = data.power > 20 ? "Operational" : "Low Power";
+                $("systemStatus").classList.toggle("operational", data.power > 20);
+            }
+
+            if ($("lastUpdateText")) {
+                const diffMs = new Date() - data.lastUpdate;
+                const diffSec = Math.round(diffMs / 1000);
+                let text = diffSec <= 1 ? "Just now" : diffSec + " seconds ago";
+                $("lastUpdateText").textContent = text;
+            }
+
+            // recent activity
+            const activityListEl = $("activityList");
+            if (activityListEl) {
+                activityListEl.innerHTML = "";
+                data.activities.slice(0, 5).forEach(act => {
+                    const container = document.createElement("div");
+                    container.style.marginBottom = "10px";
+
+                    const row = document.createElement("div");
+                    row.style.display = "flex";
+                    row.style.alignItems = "center";
+                    row.style.gap = "8px";
+
+                    const p = document.createElement("p");
+                    const img = document.createElement("img");
+                    img.src = "Images/icons8-dot-24.png";
+                    img.style.height = "12px";
+
+                    p.appendChild(img);
+                    p.appendChild(document.createTextNode(" " + act.message));
+                    row.appendChild(p);
+
+                    const small = document.createElement("small");
+                    small.style.color = "#5a6475";
+                    small.textContent = formatSecondsAgo(act.secondsAgo);
+
+                    container.appendChild(row);
+                    container.appendChild(small);
+
+                    activityListEl.appendChild(container);
+                });
+            }
+        }
+
+        function formatSecondsAgo(sec) {
+            if (sec < 60) return sec + " seconds ago";
+            const min = Math.floor(sec / 60);
+            if (min < 60) return min + " minutes ago";
+            const hr = Math.floor(min / 60);
+            return hr + " hours ago";
+        }
+
+        function randomInRange(value, min, max, step) {
+            let newVal = value + (Math.random() * 2 - 1) * step;
+            if (newVal < min) newVal = min;
+            if (newVal > max) newVal = max;
+            return newVal;
+        }
+
+        // simulate new reading
+        function generateMockUpdate() {
+            state.temperature = randomInRange(state.temperature, 15, 45, 0.7);
+            state.humidity   = randomInRange(state.humidity, 20, 90, 1.2);
+            state.windSpeed  = randomInRange(state.windSpeed, 0, 40, 2);
+            state.power      = randomInRange(state.power, 10, 100, 2);
+
+            state.lastUpdate = new Date();
+
+            const messages = [
+                "New reading received from tracker",
+                "Temperature threshold checked",
+                "GPS location verified",
+                "Battery status updated",
+                "Sensor heartbeat received"
+            ];
+            const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+
+            state.activities.unshift({
+                message: randomMessage,
+                secondsAgo: 0
+            });
+
+            state.activities.forEach(a => a.secondsAgo += 5);
+            if (state.activities.length > 8) {
+                state.activities.length = 8;
+            }
+        }
+
+        function startDataFeed(onData) {
+            if (USE_MOCK_DATA) {
+                renderDashboard(state);
+                setInterval(() => {
+                    generateMockUpdate();
+                    onData(state);
+                }, 5000);
+            } else {
+                // later: replace with Firebase / device listener
+                // e.g. db.collection("readings").orderBy("timestamp","desc").limit(1).onSnapshot(...)
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            startDataFeed(renderDashboard);
+        });
+    </script>
+</body>
+</html>
